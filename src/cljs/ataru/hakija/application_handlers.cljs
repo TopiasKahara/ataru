@@ -461,6 +461,8 @@
         (when selection-limited
           {:http {:method  :put
                   :url     (str "/hakemus/api/selection-limit?form-key=" (-> db :form :key))
+                  :headers (when (util/include-csrf-header? :put)
+                             {"CSRF" (util/csrf-token)})
                   :handler [:application/handle-selection-limit]}})))))
 
 (defn- handle-get-application [{:keys [db]}
