@@ -10,6 +10,7 @@
               is-required-field?
               markdown-paragraph
               belongs-to-hakukohde-or-ryhma?]]
+            [ataru.application-common.option-visibility :as option-visibility]
             [ataru.hakija.application-hakukohde-component :as hakukohde]
             [ataru.hakija.pohjakoulutusristiriita :as pohjakoulutusristiriita]
             [ataru.util :as util]
@@ -22,7 +23,6 @@
             [ataru.hakija.components.generic-label-component :as generic-label-component]
             [ataru.hakija.components.info-text-component :as info-text-component]
             [ataru.hakija.components.question-hakukohde-names-component :as hakukohde-names-component]
-            [ataru.hakija.application.option-visibility :as option-visibility]
             [ataru.hakija.arvosanat.arvosanat-render :as arvosanat]
             [ataru.hakija.render-generic-component :as generic-component]))
 
@@ -156,7 +156,8 @@
 (defn- text-field-followups-container [field-descriptor options answer-value question-group-idx]
   (let [followups (get-visible-followups field-descriptor answer-value options)]
     (when (not-empty followups)
-      (into [:div.application__form-multi-choice-followups-container.animated.fadeIn]
+      (into [:div.application__form-multi-choice-followups-container.animated.fadeIn
+             {:data-test-id "tekstikenttä-lisäkysymykset"}]
             (for [followup followups]
               ^{:key (:id followup)}
               [render-field followup question-group-idx])))))
@@ -185,16 +186,18 @@
                                (partial textual-field-change field-descriptor))
             on-blur          (fn [_] (textual-field-blur field-descriptor))
             form-field-id    (application-field/form-field-id field-descriptor idx)
-            data-test-id     (when (some #{id} [:first-name
-                                                :last-name
-                                                :ssn
-                                                :phone
-                                                :address
-                                                :postal-code
-                                                :postal-office])
+            data-test-id     (if (some #{id} [:first-name
+                                              :preferred-name
+                                              :last-name
+                                              :ssn
+                                              :phone
+                                              :address
+                                              :postal-code
+                                              :postal-office])
                                (-> id
                                    name
-                                   (str "-input")))]
+                                   (str "-input"))
+                               "tekstikenttä-input")]
         [:div.application__form-field
          [form-field-label-component/form-field-label field-descriptor form-field-id]
          (when (belongs-to-hakukohde-or-ryhma? field-descriptor)

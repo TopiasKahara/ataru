@@ -93,13 +93,11 @@
                              :id                                         s/Str
                              :fieldType                                  (apply s/enum ["fieldset" "rowcontainer" "adjacentfieldset"])
                              :children                                   [(s/conditional
-                                                                                      ;#(= (:id %) "arvosanat-taulukko")
-                                                                                      ;arvosanat/ArvosanatTaulukko
-                                                                                      #(or (= "wrapperElement" (:fieldClass %))
-                                                                                           (= "questionGroup" (:fieldClass %)))
-                                                                                      (s/recursive #'WrapperElement)
-                                                                                      :else
-                                                                                      BasicElement)]
+                                                                            #(or (= "wrapperElement" (:fieldClass %))
+                                                                                 (= "questionGroup" (:fieldClass %)))
+                                                                            (s/recursive #'WrapperElement)
+                                                                            :else
+                                                                            BasicElement)]
                              :metadata                                   element-metadata-schema/ElementMetadata
                              (s/optional-key :version)                   s/Str
                              (s/optional-key :child-validator)           child-validator-schema/ChildValidator
@@ -333,7 +331,7 @@
 (s/defschema ApplicationInfo
   {:id                                              s/Int
    :key                                             s/Str
-   :lang                                            s/Str
+   (s/optional-key :lang)                           s/Str
    :state                                           s/Str
    :score                                           (s/maybe s/Num)
    :new-application-modifications                   s/Int
@@ -361,7 +359,7 @@
 (s/defschema Application
   {(s/optional-key :key)                s/Str
    :form                                s/Int
-   :lang                                s/Str
+   (s/optional-key :lang)               s/Str
    :answers                             [Answer]
    (s/optional-key :applications-count) s/Int
    (s/optional-key :state)              (s/maybe s/Str)

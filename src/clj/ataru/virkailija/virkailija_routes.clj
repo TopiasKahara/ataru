@@ -384,10 +384,10 @@
                  :information-requests         [ataru-schema/InformationRequest]
                  :selection-state-used?        s/Bool}
         (if-let [application (application-service/get-application-with-human-readable-koodis
-                               application-service
-                               application-key
-                               session
-                               newest-form)]
+                              application-service
+                              application-key
+                              session
+                              newest-form)]
           (response/ok application)
           (response/unauthorized {:error (str "Hakemuksen "
                                               application-key
@@ -1156,7 +1156,23 @@
                                 tarjonta-service
                                 fromDate
                                 limit
-                                offset)]
+                                offset
+                                nil)]
+          (response/ok applications)
+          (response/unauthorized {:error "Unauthorized"})))
+      (api/GET "/odw/:application-key" {session :session}
+        :summary "get odw report for a single application"
+        :path-params [application-key :- String]
+        :return [{s/Keyword s/Any}]
+        (if-let [applications (access-controlled-application/get-applications-for-odw
+                                organization-service
+                                session
+                                person-service
+                                tarjonta-service
+                                nil
+                                nil
+                                nil
+                                application-key)]
           (response/ok applications)
           (response/unauthorized {:error "Unauthorized"})))
       (api/GET "/tilastokeskus" {session :session}

@@ -84,7 +84,7 @@
                  [cheshire/cheshire "5.10.0"]
                  [selmer "1.12.23"]
                  [metosin/ring-http-response "0.9.1"]
-                 [fi.vm.sade/scala-cas_2.12 "1.2.0-SNAPSHOT"]
+                 [fi.vm.sade/scala-cas_2.12 "2.0.0-SNAPSHOT"]
                  [ring/ring-session-timeout "0.2.0"]
                  [org.apache.poi/poi-ooxml "4.1.2"]
                  [org.clojure/core.cache "1.0.207"]
@@ -148,7 +148,9 @@
 
   :auto-clean false
 
-  :figwheel {:css-dirs ["resources/public/css"]}
+  :figwheel {:css-dirs ["resources/public/css"]
+             :repl     false
+             :readline false}
 
   :less {:source-paths ["resources/less"]
          :target-path  "resources/public/css/compiled"}
@@ -296,9 +298,7 @@
                                                :config "config/test.edn"}
                               :jvm-opts       ^:replace ["-Durl.valinta-tulos-service.baseUrl=http://localhost:8097"]}
              :figwheel {:nrepl-port  3334
-                        :server-port 3449
-                        :repl false
-                        :readline false}
+                        :server-port 3449}
 
              :virkailija-cypress        {:env {:dev? "true"}
                                          :target-path "target/target-cypess-virkailija"}
@@ -308,7 +308,8 @@
 
              :virkailija-dev [:dev {:target-path "target-virkailija"
                                     :jvm-opts    ^:replace ["-Duser.home=."
-                                                            "-XX:MaxJavaStackTraceDepth=10"]}]
+                                                            "-XX:MaxJavaStackTraceDepth=10"
+                                                            "-Dclojure.main.report=stderr"]}]
 
              :hakija-dev     [:dev {:target-path "target-hakija"
                                     :jvm-opts    ^:replace ["-Duser.home=."

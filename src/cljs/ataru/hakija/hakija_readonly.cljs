@@ -11,8 +11,8 @@
             [ataru.util :as util]
             [cljs.core.match :refer-macros [match]]
             [ataru.application-common.application-field-common :as application-field]
-            [ataru.hakija.arvosanat.arvosanat-render :as arvosanat]
-            [ataru.hakija.application.option-visibility :as option-visibility]))
+            [ataru.application-common.option-visibility :as option-visibility]
+            [ataru.hakija.arvosanat.arvosanat-render :as arvosanat]))
 
 (declare field)
 
@@ -35,6 +35,7 @@
 
 (defn- text-nested-container [selected-options application lang group-idx]
   [:div.application-handling__nested-container.application-handling__nested-container--top-level
+   {:data-test-id "tekstikenttä-lisäkysymykset"}
    (let [ui (subscribe [:state-query [:application :ui]])]
      (doall
        (for [option selected-options]
@@ -46,7 +47,8 @@
 
 (defn- text-readonly-text [field-descriptor values group-idx]
   [:div.application__readonly-text
-   {:aria-labelledby (application-field/id-for-label field-descriptor group-idx)}
+   {:aria-labelledby (application-field/id-for-label field-descriptor group-idx)
+    :data-test-id    "tekstikenttä-vastaus"}
    (cond (and (sequential? values) (< 1 (count values)))
          [:ul.application__form-field-list
           (map-indexed
