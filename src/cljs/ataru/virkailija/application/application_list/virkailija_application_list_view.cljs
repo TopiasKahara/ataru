@@ -10,6 +10,7 @@
               [ataru.virkailija.question-search.view :as question-search]
               [ataru.virkailija.temporal :as temporal]
               [ataru.virkailija.views.hakukohde-and-hakukohderyhma-search :as h-and-h]
+              [ataru.virkailija.application.kevyt-valinta.virkailija-kevyt-valinta-translations :as kevyt-valinta-i18n]
               [clojure.string :as string]
               [goog.string :as gstring]
               [reagent.core :as r]
@@ -74,6 +75,37 @@
   [hakukohde-reviews hakukohde-oid requirement]
   (:state (first (get hakukohde-reviews [hakukohde-oid requirement]))))
 
+(defn- hakemuksen-valinnan-tila-sarake [{:keys [application-key
+                                                application-hakukohde-reviews
+                                                hakukohde-oid
+                                                lang]}]
+  (let [selection-state                                      (hakukohde-review-state
+                                                               application-hakukohde-reviews
+                                                               hakukohde-oid
+                                                               "selection-state")
+        kevyt-valinta-enabled-for-application-and-hakukohde? @(subscribe [:virkailija-kevyt-valinta/kevyt-valinta-enabled-for-application-and-hakukohde?
+                                                                          application-key
+                                                                          hakukohde-oid])]
+    [:span.application-handling__hakukohde-selection-cell
+     [:span.application-handling__hakukohde-selection.application-handling__application-list-view-cell
+      [:span.application-handling__state-label
+       {:class (str "application-handling__state-label--" (or selection-state "incomplete"))}]
+      (if kevyt-valinta-enabled-for-application-and-hakukohde?
+        (let [kevyt-valinta-property-value @(subscribe [:virkailija-kevyt-valinta/kevyt-valinta-property-value
+                                                        :kevyt-valinta/valinnan-tila
+                                                        application-key
+                                                        hakukohde-oid])
+              translation-key              (kevyt-valinta-i18n/kevyt-valinta-value-translation-key
+                                             :kevyt-valinta/valinnan-tila
+                                             kevyt-valinta-property-value)]
+          @(subscribe [:editor/virkailija-translation translation-key]))
+        (or
+          (application-states/get-review-state-label-by-name
+            review-states/application-hakukohde-selection-states
+            selection-state
+            lang)
+          @(subscribe [:editor/virkailija-translation :incomplete])))]]))
+
 (defn- applications-hakukohde-rows
   [review-settings
    application
@@ -94,7 +126,6 @@
       (map
         (fn [hakukohde-oid]
           (let [processing-state       (hakukohde-review-state application-hakukohde-reviews hakukohde-oid "processing-state")
-                selection-state        (hakukohde-review-state application-hakukohde-reviews hakukohde-oid "selection-state")
                 show-state-email-icon? (and
                                          (< 0 (:new-application-modifications application))
                                          (= "information-request" processing-state))
@@ -120,7 +151,7 @@
                         (:attachment-handling review-settings true))
                [attachment-state-counts hakukohde-attachment-states])
              [:span.application-handling__hakukohde-state-cell
-              [:span.application-handling__hakukohde-state.application-handling__count-tag
+              [:span.application-handling__hakukohde-state.application-handling__application-list-view-cell
                [:span.application-handling__state-label
                 {:class (str "application-handling__state-label--" (or processing-state "unprocessed"))}]
                (or
@@ -132,16 +163,10 @@
                (when show-state-email-icon?
                  [:i.zmdi.zmdi-email.application-handling__list-row-email-icon])]]
              (when (:selection-state review-settings true)
-               [:span.application-handling__hakukohde-selection-cell
-                [:span.application-handling__hakukohde-selection.application-handling__count-tag
-                 [:span.application-handling__state-label
-                  {:class (str "application-handling__state-label--" (or selection-state "incomplete"))}]
-                 (or
-                   (application-states/get-review-state-label-by-name
-                     review-states/application-hakukohde-selection-states
-                     selection-state
-                     @lang)
-                   @(subscribe [:editor/virkailija-translation :incomplete]))]])]))
+               [hakemuksen-valinnan-tila-sarake {:application-key               (:key application)
+                                                 :hakukohde-oid                 hakukohde-oid
+                                                 :application-hakukohde-reviews application-hakukohde-reviews
+                                                 :lang                          @lang}])]))
         application-hakukohde-oids))))
 
 (defn- application-list-row [application selected? select-application]
