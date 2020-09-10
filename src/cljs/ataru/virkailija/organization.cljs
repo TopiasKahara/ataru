@@ -3,6 +3,8 @@
   (:require [cljs.core.async :as async]
             [ajax.core :refer [GET]]))
 
+(defonce caller-id (aget js/config "virkailija-caller-id"))
+
 (defn fetch-hakukohderyhmat
   [c]
   (GET (str "/lomake-editori/api/organization/hakukohderyhmat")
@@ -12,4 +14,5 @@
                        (fn [_] (async/close! c)))
      :response-format :json
      :keywords? true
-     :timeout 15000}))
+     :timeout 15000
+     :headers {:caller-id caller-id}}))

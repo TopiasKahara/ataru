@@ -3,6 +3,8 @@
   (:require [cljs.core.async :as async]
             [ajax.core :refer [GET]]))
 
+(defonce caller-id (aget js/config "virkailija-caller-id"))
+
 (defn- try-reduce
   [f init channel]
   (asyncm/go-try
@@ -22,7 +24,8 @@
                                     (fn [_] (async/close! c)))
         :response-format :json
         :keywords? true
-        :timeout 15000}))
+        :timeout 15000
+        :headers {:caller-id caller-id}}))
 
 (defn- fetch-haku
   [haku-oid c]
@@ -33,7 +36,8 @@
                                     (fn [_] (async/close! c)))
         :response-format :json
         :keywords? true
-        :timeout 15000}))
+        :timeout 15000
+        :headers {:caller-id caller-id}}))
 
 (defn- fetch-haku-with-hakukohteet
   [organization-oids haku-oid c]

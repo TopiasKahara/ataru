@@ -2,6 +2,8 @@
   (:require [cljs.core.async :as async]
             [ajax.core :refer [GET]]))
 
+(defonce caller-id "1.2.246.562.10.00000000001.ataru-hakija.frontend")
+
 (defn has-applied
   [haku-oid identifier]
   (let [url  (str "/hakemus/api/has-applied"
@@ -19,5 +21,6 @@
                            (send false))
           :format :json
           :response-format :json
-          :keywords? true})
+          :keywords? true
+          :headers {:caller-id caller-id}})
     c))
