@@ -64,7 +64,7 @@
   [{:keys [has-applied value answers-by-key field-descriptor]}]
   (let [multiple?      (get-in field-descriptor
                                [:params :can-submit-multiple-applications]
-                               true)
+                               false)
         haku-oid       (get-in field-descriptor
                                [:params :haku-oid])
         preferred-name (:preferred-name answers-by-key)
