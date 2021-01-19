@@ -4,7 +4,7 @@
             [clojure.core.async :as async]
             [clojure.walk :as walk]
             [ataru.cache.cache-service :as cache-service]
-            [speclj.core :refer :all]
+            [speclj.core :refer [describe tags it should should= should-not]]
             [ataru.util :as util]
             [ataru.fixtures.answer :refer [answer]]
             [ataru.fixtures.person-info-form :refer [form]]))
