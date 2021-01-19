@@ -230,7 +230,9 @@
                                        (set-original-values latest-application final-application)
                                        form
                                        applied-hakukohderyhmat
-                                       (some? virkailija-secret))
+                                       (some? virkailija-secret)
+                                       (if is-modify? (get :id latest-application) "NEW_APPLICATION_ID")
+                                       (if is-modify? (get :key latest-application) "NEW_APPLICATION_KEY"))
         edited-cannot-edit-questions  (when is-modify?
                                         (edited-cannot-edit-questions
                                          final-application
