@@ -9,9 +9,6 @@
             [ataru.fixtures.answer :refer [answer]]
             [ataru.fixtures.person-info-form :refer [form]]))
 
-(declare should)
-(declare should-not)
-
 (def f form)
 (def a answer)
 (def extra-answers (update a :answers conj {:key "foo" :value "barbara"}))
