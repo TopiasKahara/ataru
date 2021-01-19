@@ -250,46 +250,60 @@
         extra-answers      (extra-answers-not-in-original-form
                              (map (comp keyword :id) (util/flatten-form-fields (:content form)))
                              (keys answers-by-key))
-        failed-results     (build-results koodisto-cache has-applied answers-by-key form (:content form) applied-hakukohderyhmat virkailija?)
-        failed-meta-fields (validate-meta-fields application)]
+        failed-results            (build-results koodisto-cache has-applied answers-by-key form (:content form) applied-hakukohderyhmat virkailija?)
+        failed-meta-fields        (validate-meta-fields application)
+        failed-application-id     (:id application)
+        failed-application-key    (:key application)
+        failed-haku-oid           (:haku application)
+        failed-hakukohteet        (:hakukohde application)
+        failed-person-oid         (:person-oid application)
+        failed-person-first-name  (get-in answers-by-key [:first-name :value])
+        failed-person-last-name   (get-in answers-by-key [:last-name :value])
+        failed-person-email       (get-in answers-by-key [:email :value])
+        failed-form-id            (:id form)
+        failed-form-key           (:key form)]
     (when (not (empty? extra-answers))
-      (log/warnf "Extra answers in application (key: %s, haku: %s, hakukohde: %s)
+      (println application)
+      (log/warnf "Extra answers in application (id: %s, key: %s, haku: %s, hakukohde: %s)
       for person (oid: %s, name: %s %s, email: %s). Form id: %s, key: %s. Answers: %s"
-                 (:key application)
-                 (:haku application)
-                 (:hakukohde application)
-                 (:person-oid application)
-                 (get-in answers-by-key [:first-name :value])
-                 (get-in answers-by-key [:last-name :value])
-                 (get-in answers-by-key [:email :value])
-                 (:id form)
-                 (:key form)
+                 failed-application-id
+                 failed-application-key
+                 failed-haku-oid
+                 failed-hakukohteet
+                 failed-person-oid
+                 failed-person-first-name
+                 failed-person-last-name
+                 failed-person-email
+                 failed-form-id
+                 failed-form-key
                  (apply str extra-answers)))
     (when (not (empty? failed-results))
-      (log/warnf "Validation failed in application (key: %s, haku: %s, hakukohde: %s)
+      (log/warnf "Validation failed in application (id: %s, key: %s, haku: %s, hakukohde: %s)
       fields for person (oid: %s, name: %s %s, email: %s). Form id: %s, key: %s. Failed results: %s"
-                 (:key application)
-                 (:haku application)
-                 (:hakukohde application)
-                 (:person-oid application)
-                 (get-in answers-by-key [:first-name :value])
-                 (get-in answers-by-key [:last-name :value])
-                 (get-in answers-by-key [:email :value])
-                 (:id form)
-                 (:key form)
+                 failed-application-id
+                 failed-application-key
+                 failed-haku-oid
+                 failed-hakukohteet
+                 failed-person-oid
+                 failed-person-first-name
+                 failed-person-last-name
+                 failed-person-email
+                 failed-form-id
+                 failed-form-key
                  failed-results))
     (when (not (empty? failed-meta-fields))
-      (log/warnf "Validation failed in application (key: %s, haku: %s, hakukohde: %s)
+      (log/warnf "Validation failed in application (id: %s, key: %s, haku: %s, hakukohde: %s)
       meta fields. Form id: %s, key: %s. Failed meta fields: %s"
-                 (:key application)
-                 (:haku application)
-                 (:hakukohde application)
-                 (:person-oid application)
-                 (get-in answers-by-key [:first-name :value])
-                 (get-in answers-by-key [:last-name :value])
-                 (get-in answers-by-key [:email :value])
-                 (:id form)
-                 (:key form)
+                 failed-application-id
+                 failed-application-key
+                 failed-haku-oid
+                 failed-hakukohteet
+                 failed-person-oid
+                 failed-person-first-name
+                 failed-person-last-name
+                 failed-person-email
+                 failed-form-id
+                 failed-form-key
                  (str failed-meta-fields)))
     {:passed?
      (and
