@@ -238,6 +238,8 @@
                                          final-application
                                          latest-application
                                          form))]
+    (println "latest-application: " latest-application)
+    (println "final-application: " final-application)
     (cond
       (and (some? (:virkailija-secret application))
            (nil? virkailija-secret))
