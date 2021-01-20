@@ -231,15 +231,13 @@
                                        form
                                        applied-hakukohderyhmat
                                        (some? virkailija-secret)
-                                       (if is-modify? (get :id latest-application) "NEW_APPLICATION_ID")
-                                       (if is-modify? (get :key latest-application) "NEW_APPLICATION_KEY"))
+                                       (get latest-application :id "NEW_APPLICATION_ID")
+                                       (get latest-application :key "NEW_APPLICATION_KEY"))
         edited-cannot-edit-questions  (when is-modify?
                                         (edited-cannot-edit-questions
                                          final-application
                                          latest-application
                                          form))]
-    (println "latest-application: " latest-application)
-    (println "final-application: " final-application)
     (cond
       (and (some? (:virkailija-secret application))
            (nil? virkailija-secret))
